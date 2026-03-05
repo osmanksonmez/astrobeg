@@ -2,7 +2,8 @@
 /**
  * fetch-instagram.js
  *
- * Fetches posts from Instagram via Apify's instagram-scraper actor.
+ * Fetches posts from Instagram via Apify's instagram-scraper actor,
+ * downloads images locally to ig-images/, and writes posts.json.
  * No Facebook/Meta app or token required — scrapes the public profile.
  *
  * Run manually:  APIFY_TOKEN=xxx node fetch-instagram.js
@@ -12,13 +13,15 @@
 'use strict';
 
 const https = require('https');
+const http  = require('http');
 const fs    = require('fs');
 const path  = require('path');
 
-const TOKEN    = process.env.APIFY_TOKEN;
-const USERNAME = 'astrobeg';
-const LIMIT    = 30;
-const OUTPUT   = path.join(__dirname, 'posts.json');
+const TOKEN     = process.env.APIFY_TOKEN;
+const USERNAME  = 'astrobeg';
+const LIMIT     = 30;
+const OUTPUT    = path.join(__dirname, 'posts.json');
+const IMG_DIR   = path.join(__dirname, 'ig-images');
 
 // ── Helpers ────────────────────────────────────────────────────
 function httpsPost(url, body) {
@@ -44,6 +47,31 @@ function httpsPost(url, body) {
     req.on('error', reject);
     req.write(body);
     req.end();
+  });
+}
+
+/** Download a URL to a local file path, following redirects. */
+function downloadFile(url, dest) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(dest);
+    const get  = url.startsWith('https') ? https.get : http.get;
+    get(url, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        file.close();
+        fs.unlink(dest, () => {});
+        return downloadFile(res.headers.location, dest).then(resolve).catch(reject);
+      }
+      if (res.statusCode !== 200) {
+        file.close();
+        fs.unlink(dest, () => {});
+        return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+      }
+      res.pipe(file);
+      file.on('finish', () => file.close(resolve));
+    }).on('error', (err) => {
+      fs.unlink(dest, () => {});
+      reject(err);
+    });
   });
 }
 
@@ -77,6 +105,8 @@ async function main() {
     process.exit(1);
   }
 
+  if (!fs.existsSync(IMG_DIR)) fs.mkdirSync(IMG_DIR);
+
   // Synchronous run — waits for the actor to finish and returns dataset items directly.
   const apiUrl =
     `https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items` +
@@ -98,21 +128,47 @@ async function main() {
 
   console.log(`Retrieved ${items.length} items.`);
 
-  const posts = items
-    .filter(m => ['Image', 'Sidecar'].includes(m.type))
-    .map(m => ({
+  // Download images and build post objects
+  const posts = [];
+  for (const m of items) {
+    if (!['Image', 'Sidecar'].includes(m.type)) continue;
+
+    const remoteUrl = m.displayUrl || null;
+    let localImage  = null;
+
+    if (remoteUrl) {
+      const filename = `${m.shortCode || m.id}.jpg`;
+      const dest     = path.join(IMG_DIR, filename);
+
+      // Skip download if already saved
+      if (fs.existsSync(dest)) {
+        localImage = `ig-images/${filename}`;
+        console.log(`  Skipping (already saved): ${filename}`);
+      } else {
+        try {
+          await downloadFile(remoteUrl, dest);
+          localImage = `ig-images/${filename}`;
+          console.log(`  Downloaded: ${filename}`);
+        } catch (err) {
+          console.warn(`  Failed to download image for ${m.shortCode}: ${err.message}`);
+        }
+      }
+    }
+
+    posts.push({
       id:            m.shortCode || m.id,
       title:         extractTitle(m.caption),
       excerpt:       extractExcerpt(m.caption),
       caption:       m.caption || '',
-      image:         m.displayUrl || null,
-      thumbnail:     m.displayUrl || null,
+      image:         localImage,
+      thumbnail:     localImage,
       permalink:     m.url,
       date:          m.timestamp,
       dateFormatted: formatDate(m.timestamp),
       type:          m.type === 'Sidecar' ? 'CAROUSEL_ALBUM' : 'IMAGE',
       source:        'instagram',
-    }));
+    });
+  }
 
   // Merge with existing manual (non-instagram) posts
   let existing = { posts: [] };

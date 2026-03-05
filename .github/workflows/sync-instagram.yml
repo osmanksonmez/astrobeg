@@ -24,24 +24,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch Instagram posts
-        id: fetch
+      - name: Fetch Instagram posts via Apify
         env:
-          INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
-        run: |
-          node fetch-instagram.js | tee /tmp/fetch_output.txt
-          # Capture refreshed token if the script emitted one
-          REFRESHED=$(grep '^REFRESHED_TOKEN=' /tmp/fetch_output.txt | cut -d= -f2- || true)
-          echo "refreshed_token=$REFRESHED" >> "$GITHUB_OUTPUT"
-
-      # Update the secret when the token was refreshed (requires gh CLI + secrets write permission)
-      - name: Update INSTAGRAM_TOKEN secret if refreshed
-        if: steps.fetch.outputs.refreshed_token != ''
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "${{ steps.fetch.outputs.refreshed_token }}" | \
-            gh secret set INSTAGRAM_TOKEN --repo "${{ github.repository }}"
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: node fetch-instagram.js
 
       - name: Commit and push posts.json if changed
         run: |

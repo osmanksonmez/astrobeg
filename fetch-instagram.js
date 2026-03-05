@@ -2,54 +2,57 @@
 /**
  * fetch-instagram.js
  *
- * Fetches posts from the Instagram Graph API and writes them to posts.json.
- * Run manually:  INSTAGRAM_TOKEN=xxx node fetch-instagram.js
- * Run via CI:    GitHub Actions supplies INSTAGRAM_TOKEN from repo secrets.
+ * Fetches posts from Instagram via Apify's instagram-scraper actor.
+ * No Facebook/Meta app or token required — scrapes the public profile.
  *
- * Required env vars:
- *   INSTAGRAM_TOKEN  — long-lived Instagram User Access Token (never commit this)
- *
- * The token must have the following permissions:
- *   instagram_basic, pages_show_list (for business accounts)
- *   OR instagram_basic (for Basic Display API personal accounts)
- *
- * Token refresh: long-lived tokens last 60 days. The workflow auto-refreshes
- * them before expiry using the /refresh_access_token endpoint.
+ * Run manually:  APIFY_TOKEN=xxx node fetch-instagram.js
+ * Run via CI:    GitHub Actions supplies APIFY_TOKEN from repo secrets.
  */
 
 'use strict';
 
-const https   = require('https');
-const fs      = require('fs');
-const path    = require('path');
+const https = require('https');
+const fs    = require('fs');
+const path  = require('path');
 
-// ── Config ────────────────────────────────────────────────────
-const TOKEN      = process.env.INSTAGRAM_TOKEN;
-const LIMIT      = 30;   // posts to fetch per sync
-const OUTPUT     = path.join(__dirname, 'posts.json');
+const TOKEN    = process.env.APIFY_TOKEN;
+const USERNAME = 'astrobeg';
+const LIMIT    = 30;
+const OUTPUT   = path.join(__dirname, 'posts.json');
 
-// ── Helpers ───────────────────────────────────────────────────
-function httpsGet(url) {
+// ── Helpers ────────────────────────────────────────────────────
+function httpsPost(url, body) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const parsed = new URL(url);
+    const options = {
+      hostname: parsed.hostname,
+      path:     parsed.pathname + parsed.search,
+      method:   'POST',
+      headers:  {
+        'Content-Type':   'application/json',
+        'Content-Length': Buffer.byteLength(body),
+      },
+    };
+    const req = https.request(options, (res) => {
       let raw = '';
       res.on('data', c => raw += c);
       res.on('end', () => {
         try { resolve(JSON.parse(raw)); }
         catch (e) { reject(new Error('Bad JSON: ' + raw.slice(0, 200))); }
       });
-    }).on('error', reject);
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
   });
 }
 
-/** Extract a blog-style title from the first line of a caption. */
 function extractTitle(caption) {
   if (!caption) return 'Astrobeg';
   const first = caption.split('\n')[0].replace(/[*_#]/g, '').trim();
   return first.slice(0, 90) || 'Astrobeg';
 }
 
-/** Clean excerpt: strip hashtags, excess whitespace, cap length. */
 function extractExcerpt(caption, max = 220) {
   if (!caption) return '';
   const clean = caption
@@ -60,69 +63,58 @@ function extractExcerpt(caption, max = 220) {
   return clean.length > max ? clean.slice(0, max).trimEnd() + '…' : clean;
 }
 
-/** Format ISO timestamp to Turkish locale date string. */
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('tr-TR', {
     year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 
-// ── Refresh token (keeps it alive beyond 60 days) ─────────────
-async function refreshToken(token) {
-  const url = `https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${token}`;
-  const data = await httpsGet(url);
-  if (data.access_token) {
-    console.log(`Token refreshed. New expiry: ${data.expires_in}s`);
-    return data.access_token;
-  }
-  console.warn('Token refresh skipped:', data.error?.message || 'unknown');
-  return token;
-}
-
 // ── Main ──────────────────────────────────────────────────────
 async function main() {
   if (!TOKEN) {
-    console.error('Error: INSTAGRAM_TOKEN environment variable is not set.');
-    console.error('Set it and retry:  INSTAGRAM_TOKEN=your_token node fetch-instagram.js');
+    console.error('Error: APIFY_TOKEN environment variable is not set.');
+    console.error('Set it and retry:  APIFY_TOKEN=your_token node fetch-instagram.js');
     process.exit(1);
   }
 
-  // Try to refresh the token first (safe to call even if not near expiry)
-  const liveToken = await refreshToken(TOKEN);
+  // Synchronous run — waits for the actor to finish and returns dataset items directly.
+  const apiUrl =
+    `https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items` +
+    `?token=${TOKEN}&timeout=240&memory=256`;
 
-  // Fetch media list
-  const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
-  const apiUrl = `https://graph.instagram.com/me/media?fields=${fields}&limit=${LIMIT}&access_token=${liveToken}`;
+  const input = JSON.stringify({
+    directUrls:   [`https://www.instagram.com/${USERNAME}/`],
+    resultsType:  'posts',
+    resultsLimit: LIMIT,
+  });
 
-  console.log('Fetching Instagram media…');
-  const response = await httpsGet(apiUrl);
+  console.log(`Fetching Instagram posts for @${USERNAME} via Apify…`);
+  const items = await httpsPost(apiUrl, input);
 
-  if (response.error) {
-    console.error('Instagram API error:', response.error.message);
+  if (!Array.isArray(items)) {
+    console.error('Unexpected Apify response:', JSON.stringify(items).slice(0, 300));
     process.exit(1);
   }
 
-  const media = response.data || [];
-  console.log(`Retrieved ${media.length} media items.`);
+  console.log(`Retrieved ${items.length} items.`);
 
-  // Map to our post schema
-  const posts = media
-    .filter(m => ['IMAGE', 'CAROUSEL_ALBUM'].includes(m.media_type))
+  const posts = items
+    .filter(m => ['Image', 'Sidecar'].includes(m.type))
     .map(m => ({
-      id:        m.id,
-      title:     extractTitle(m.caption),
-      excerpt:   extractExcerpt(m.caption),
-      caption:   m.caption || '',
-      image:     m.media_url   || null,
-      thumbnail: m.thumbnail_url || m.media_url || null,
-      permalink: m.permalink,
-      date:      m.timestamp,
+      id:            m.shortCode || m.id,
+      title:         extractTitle(m.caption),
+      excerpt:       extractExcerpt(m.caption),
+      caption:       m.caption || '',
+      image:         m.displayUrl || null,
+      thumbnail:     m.displayUrl || null,
+      permalink:     m.url,
+      date:          m.timestamp,
       dateFormatted: formatDate(m.timestamp),
-      type:      m.media_type,
-      source:    'instagram',
+      type:          m.type === 'Sidecar' ? 'CAROUSEL_ALBUM' : 'IMAGE',
+      source:        'instagram',
     }));
 
-  // Merge with any existing non-instagram (manual) posts
+  // Merge with existing manual (non-instagram) posts
   let existing = { posts: [] };
   if (fs.existsSync(OUTPUT)) {
     try { existing = JSON.parse(fs.readFileSync(OUTPUT, 'utf8')); }
@@ -142,11 +134,6 @@ async function main() {
 
   fs.writeFileSync(OUTPUT, JSON.stringify(output, null, 2), 'utf8');
   console.log(`Saved ${merged.length} posts to posts.json (${posts.length} from Instagram, ${manualPosts.length} manual).`);
-
-  // Print refreshed token so the Actions workflow can update the secret
-  if (liveToken !== TOKEN) {
-    console.log('\nREFRESHED_TOKEN=' + liveToken);
-  }
 }
 
 main().catch(err => {

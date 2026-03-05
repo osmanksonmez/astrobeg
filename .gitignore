@@ -1,2 +1,6 @@
 node_modules/
 mail-config.php
+.playwright-mcp/
+*.pdf
+astrobeg_*.png
+new_*.png

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog – Astrobeg</title>
+  <meta name="description" content="Astrobeg blog: astroloji yazıları, Instagram paylaşımları ve günlük gökyüzü yorumları.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Blog grid ── */
+    .blog-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 2.5rem;
+    }
+
+    .blog-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 7px 20px;
+      border: 1px solid var(--navy-border);
+      border-radius: 100px;
+      background: transparent;
+      color: var(--cream-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.22s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201,168,76,0.06);
+    }
+
+    .blog-count {
+      font-size: 0.8rem;
+      color: var(--cream-muted);
+    }
+
+    .blog-count span {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* Grid */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    /* Card */
+    .post-card {
+      background: var(--navy-card);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .post-card:hover {
+      border-color: rgba(201,168,76,0.4);
+      transform: translateY(-4px);
+    }
+
+    .post-card-img-wrap {
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .post-card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.88) saturate(0.85);
+      transition: transform 0.5s var(--ease), filter 0.4s;
+    }
+
+    .post-card:hover .post-card-img {
+      transform: scale(1.05);
+      filter: brightness(0.95) saturate(1);
+    }
+
+    /* Placeholder when no image */
+    .post-card-img-placeholder {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(135deg, rgba(16,24,64,0.9) 0%, rgba(30,42,122,0.5) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-card-img-placeholder svg {
+      width: 56px;
+      color: var(--gold);
+      opacity: 0.25;
+    }
+
+    /* Source badge */
+    .post-source-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(5,9,33,0.82);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 100px;
+      padding: 4px 10px;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      backdrop-filter: blur(6px);
+    }
+
+    .post-source-badge svg { width: 11px; }
+
+    /* Body */
+    .post-card-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .post-meta {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.6rem;
+    }
+
+    .post-card-body h3 {
+      font-size: 1.05rem;
+      color: var(--cream);
+      margin-bottom: 0.6rem;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .post-card-body p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .post-read-more {
+      margin-top: 1.2rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+      text-decoration: none;
+    }
+
+    .post-read-more:hover { gap: 10px; }
+    .post-read-more::after { content: '→'; }
+
+    /* ── Loading / Error states ── */
+    .posts-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .posts-state svg {
+      width: 48px;
+      color: var(--gold);
+      opacity: 0.4;
+      margin: 0 auto 1.5rem;
+      display: block;
+    }
+
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 2px solid var(--navy-border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 3rem;
+    }
+
+    .page-btn {
+      width: 38px; height: 38px;
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--cream-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .page-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--navy-deep);
+      font-weight: 600;
+    }
+
+    .page-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* ── Sync banner ── */
+    .sync-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 20px;
+      background: rgba(30,42,122,0.3);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius);
+      margin-bottom: 2.5rem;
+      font-size: 0.8rem;
+      color: var(--cream-muted);
+    }
+
+    .sync-banner strong { color: var(--cream); }
+
+    .sync-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #4CAF50;
+      display: inline-block;
+      margin-right: 6px;
+      box-shadow: 0 0 6px rgba(76,175,80,0.6);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .posts-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .posts-grid { grid-template-columns: 1fr; }
+      .blog-controls { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Navigation ══ -->
+  <nav class="site-nav scrolled" id="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.svg" alt="Astrobeg logo mark" class="nav-logo-mark">
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">ASTROBEG</span>
+          <span class="nav-logo-sub">Begüm Küçüksönmez</span>
+        </div>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menüyü aç">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Anasayfa</a></li>
+        <li><a href="hakkimda.html">Hakkımda</a></li>
+        <li><a href="danismanlik.html">Danışmanlık</a></li>
+        <li><a href="https://astrobegshop.com" target="_blank" rel="noopener">Mağaza</a></li>
+        <li><a href="blog.html" class="active">Blog</a></li>
+        <li><a href="iletisim.html" class="nav-cta">İletişim</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ══ Page Hero ══ -->
+  <div class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Yazılar & Paylaşımlar</span>
+      <h1>Blog</h1>
+    </div>
+  </div>
+
+  <!-- ══ Blog Content ══ -->
+  <section class="section">
+    <div class="container">
+
+      <!-- Sync info banner -->
+      <div class="sync-banner" id="sync-banner" style="display:none;">
+        <div>
+          <span class="sync-dot"></span>
+          <strong>Instagram ile senkronize</strong>
+          &nbsp;—&nbsp;
+          <span id="sync-updated"></span> tarihinde güncellendi
+        </div>
+        <a href="https://www.instagram.com/astrobeg/" target="_blank" rel="noopener"
+           style="color:var(--gold); font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase;">
+          @astrobeg →
+        </a>
+      </div>
+
+      <!-- Controls -->
+      <div class="blog-controls">
+        <div class="blog-filters" id="blog-filters">
+          <button class="filter-btn active" data-filter="all">Tümü</button>
+          <button class="filter-btn" data-filter="instagram">Instagram</button>
+          <button class="filter-btn" data-filter="manual">Blog Yazıları</button>
+        </div>
+        <div class="blog-count">
+          <span id="visible-count">0</span> yazı
+        </div>
+      </div>
+
+      <!-- Posts grid -->
+      <div class="posts-grid" id="posts-grid">
+        <div class="posts-state">
+          <div class="loading-spinner"></div>
+          <p>Yazılar yükleniyor…</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination"></div>
+
+    </div>
+  </section>
+
+  <!-- ══ Footer ══ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <img src="logo.svg" alt="" class="footer-logo-mark">
+          <span class="footer-logo-name">ASTROBEG</span>
+        </div>
+        <p class="footer-copy">© 2026 Astrobeg. Tüm hakları saklıdır.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/astrobeg/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="4.5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Nav ──────────────────────────────────────────────────
+    const nav = document.getElementById('site-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('nav-links').classList.toggle('open');
+    });
+
+    // ── State ────────────────────────────────────────────────
+    const PER_PAGE = 9;
+    let allPosts    = [];
+    let filtered    = [];
+    let currentPage = 1;
+    let activeFilter = 'all';
+
+    // ── Fetch posts.json ─────────────────────────────────────
+    async function loadPosts() {
+      try {
+        const res = await fetch('posts.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        allPosts = data.posts || [];
+
+        // Show sync banner
+        if (data.updated) {
+          const d = new Date(data.updated);
+          document.getElementById('sync-updated').textContent =
+            d.toLocaleDateString('tr-TR', { year:'numeric', month:'long', day:'numeric' });
+          document.getElementById('sync-banner').style.display = 'flex';
+        }
+
+        applyFilter(activeFilter);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    // ── Filter ───────────────────────────────────────────────
+    function applyFilter(filter) {
+      activeFilter = filter;
+      currentPage  = 1;
+
+      if (filter === 'all') {
+        filtered = allPosts;
+      } else if (filter === 'instagram') {
+        filtered = allPosts.filter(p => p.source === 'instagram');
+      } else {
+        filtered = allPosts.filter(p => p.source === 'manual');
+      }
+
+      document.getElementById('visible-count').textContent = filtered.length;
+      renderPage(currentPage);
+      renderPagination();
+    }
+
+    document.getElementById('blog-filters').addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilter(btn.dataset.filter);
+    });
+
+    // ── Render helpers ───────────────────────────────────────
+    const igIconSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5"/>
+      <circle cx="12" cy="12" r="4.5"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>`;
+
+    const logoPlaceholderSVG = `<svg viewBox="5 8 275 148" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="10" y1="90" x2="135" y2="90" stroke-width="3"/>
+      <line x1="255" y1="90" x2="275" y2="90" stroke-width="3"/>
+      <circle cx="195" cy="90" r="60"/>
+      <circle cx="195" cy="90" r="47"/>
+      <circle cx="195" cy="90" r="35"/>
+      <circle cx="195" cy="90" r="23"/>
+      <circle cx="195" cy="90" r="12"/>
+    </svg>`;
+
+    function postCardHTML(post) {
+      const isIG = post.source === 'instagram';
+      const imgBlock = post.image
+        ? `<div class="post-card-img-wrap">
+             <img class="post-card-img" src="${escHtml(post.image)}" alt="${escHtml(post.title)}" loading="lazy">
+             ${isIG ? `<span class="post-source-badge">${igIconSVG} Instagram</span>` : ''}
+           </div>`
+        : `<div class="post-card-img-wrap">
+             <div class="post-card-img-placeholder">${logoPlaceholderSVG}</div>
+             ${isIG ? `<span class="post-source-badge">${igIconSVG} Instagram</span>` : ''}
+           </div>`;
+
+      const linkTarget = isIG ? ' target="_blank" rel="noopener"' : '';
+
+      return `
+        <article class="post-card">
+          <a href="${escHtml(post.permalink)}"${linkTarget}>${imgBlock}</a>
+          <div class="post-card-body">
+            <div class="post-meta">${escHtml(post.dateFormatted || post.date.slice(0,10))}</div>
+            <h3><a href="${escHtml(post.permalink)}"${linkTarget}>${escHtml(post.title)}</a></h3>
+            <p>${escHtml(post.excerpt)}</p>
+            <a class="post-read-more" href="${escHtml(post.permalink)}"${linkTarget}>
+              ${isIG ? "Instagram'da Gör" : 'Devamını Oku'}
+            </a>
+          </div>
+        </article>`;
+    }
+
+    function escHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function renderPage(page) {
+      const grid = document.getElementById('posts-grid');
+      const start = (page - 1) * PER_PAGE;
+      const slice = filtered.slice(start, start + PER_PAGE);
+
+      if (slice.length === 0) {
+        grid.innerHTML = `<div class="posts-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+          </svg>
+          <p>Bu kategoride henüz yazı yok.</p>
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = slice.map(postCardHTML).join('');
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(filtered.length / PER_PAGE);
+      const pg = document.getElementById('pagination');
+      if (totalPages <= 1) { pg.innerHTML = ''; return; }
+
+      let html = `<button class="page-btn" id="pg-prev" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+      for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+      }
+      html += `<button class="page-btn" id="pg-next" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+      pg.innerHTML = html;
+
+      pg.addEventListener('click', (e) => {
+        const btn = e.target.closest('.page-btn');
+        if (!btn || btn.disabled) return;
+        if (btn.id === 'pg-prev') currentPage--;
+        else if (btn.id === 'pg-next') currentPage++;
+        else currentPage = parseInt(btn.dataset.page, 10);
+        renderPage(currentPage);
+        renderPagination();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    function showError(msg) {
+      document.getElementById('posts-grid').innerHTML = `
+        <div class="posts-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+          </svg>
+          <p style="color:var(--cream)">Yazılar yüklenemedi</p>
+          <p style="font-size:.85rem;margin-top:.5rem">${escHtml(msg)}</p>
+        </div>`;
+    }
+
+    // ── Boot ─────────────────────────────────────────────────
+    loadPosts();
+  </script>
+</body>
+</html>

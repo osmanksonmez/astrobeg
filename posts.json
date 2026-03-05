@@ -1,0 +1,45 @@
+{
+  "updated": "2026-03-05T00:00:00.000Z",
+  "count": 3,
+  "posts": [
+    {
+      "id": "manual_3",
+      "title": "Doğum Haritana Göre Kendi Mumunu Tasarla: Aralık Atölyesi",
+      "excerpt": "Aralık ayında haritanıza göre kendi mumunuzu tasarlıyoruz! Eksik element → renk, dengelemek istediğiniz alan → koku, doğum haritası → tasarım.",
+      "caption": "Aralık ayında haritanıza göre kendi mumunuzu tasarlıyoruz! Eksik element → renk Dengelemek istediğiniz alan → koku Doğum haritası → tasarım",
+      "image": null,
+      "thumbnail": null,
+      "permalink": "https://astrobeg.com/dogum-haritana-gore-kendi-mumunu-tasarla-aralik-atolyesi/",
+      "date": "2025-12-16T00:00:00.000Z",
+      "dateFormatted": "16 Aralık 2025",
+      "type": "BLOG",
+      "source": "manual"
+    },
+    {
+      "id": "manual_2",
+      "title": "Hoşgeldin Haziran, Hoşgeldin Yaz",
+      "excerpt": "Hava enerjisinin çok yüksek olduğu bir güne başlıyoruz. Güneş'in İkizler burcundaki seyri, Venüs'ün ve Jüpiter'in de İkizler burcunda olması ile bu hafta oldukça dinamik.",
+      "caption": "Hava enerjisinin çok yüksek olduğu bir güne başlıyoruz. Açıkcası Güneş'in İkizler burcundaki seyri, Venüs'ün ve Jüpiter'in de İkizler burcunda olması ile bu hafta oldukça dinamik bir enerji var.",
+      "image": "https://astrobeg.com/wp-content/uploads/2024/06/74e70f0f-2c14-49af-9843-ad45f4856d0f-300x300.jpeg",
+      "thumbnail": "https://astrobeg.com/wp-content/uploads/2024/06/74e70f0f-2c14-49af-9843-ad45f4856d0f-300x300.jpeg",
+      "permalink": "https://astrobeg.com/hosgeldin-haziran-hosgeldin-yaz/",
+      "date": "2024-06-03T00:00:00.000Z",
+      "dateFormatted": "3 Haziran 2024",
+      "type": "BLOG",
+      "source": "manual"
+    },
+    {
+      "id": "manual_1",
+      "title": "27-31 Mayıs Haftası – Yeni Fikirler Üretme Zamanı",
+      "excerpt": "Bu haftanın enerjilerinde bir bakalım mı, neler olacak? Geçen haftanın sonuna doğru başlayan Güneş ile Venüs kavuşumu bu hafta ortasına kadar devam ediyor.",
+      "caption": "Bu haftanın enerjilerinde bir bakalım mı, neler olacak? Öncelikle geçen haftanın sonuna doğru başlayan Güneş ile Venüs kavuşumu bu hafta ortasına kadar devam ediyor.",
+      "image": "https://astrobeg.com/wp-content/uploads/2024/05/446604111_355816530851402_3069163210624738620_n-300x300.jpg",
+      "thumbnail": "https://astrobeg.com/wp-content/uploads/2024/05/446604111_355816530851402_3069163210624738620_n-300x300.jpg",
+      "permalink": "https://astrobeg.com/27-31-mayis-haftasi-yeni-fikirler-uretme-zamani/",
+      "date": "2024-05-28T00:00:00.000Z",
+      "dateFormatted": "28 Mayıs 2024",
+      "type": "BLOG",
+      "source": "manual"
+    }
+  ]
+}

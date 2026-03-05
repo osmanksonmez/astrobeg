@@ -1,0 +1,56 @@
+name: Sync Instagram Posts
+
+on:
+  schedule:
+    # Runs every day at 07:00 UTC (10:00 Istanbul time)
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+    # Also allows manual trigger from the Actions tab
+
+permissions:
+  contents: write   # needed to commit posts.json back to the repo
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Instagram posts
+        id: fetch
+        env:
+          INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
+        run: |
+          node fetch-instagram.js | tee /tmp/fetch_output.txt
+          # Capture refreshed token if the script emitted one
+          REFRESHED=$(grep '^REFRESHED_TOKEN=' /tmp/fetch_output.txt | cut -d= -f2- || true)
+          echo "refreshed_token=$REFRESHED" >> "$GITHUB_OUTPUT"
+
+      # Update the secret when the token was refreshed (requires gh CLI + secrets write permission)
+      - name: Update INSTAGRAM_TOKEN secret if refreshed
+        if: steps.fetch.outputs.refreshed_token != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "${{ steps.fetch.outputs.refreshed_token }}" | \
+            gh secret set INSTAGRAM_TOKEN --repo "${{ github.repository }}"
+
+      - name: Commit and push posts.json if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add posts.json
+          if git diff --staged --quiet; then
+            echo "No changes to posts.json — skipping commit."
+          else
+            git commit -m "chore: sync Instagram posts $(date -u '+%Y-%m-%d') [skip ci]"
+            git push
+          fi

@@ -361,7 +361,7 @@
         <li><a href="hakkimda.html">Hakkımda</a></li>
         <li><a href="danismanlik.html">Danışmanlık</a></li>
         <li><a href="https://astrobegshop.com" target="_blank" rel="noopener">Mağaza</a></li>
-        <li><a href="http://astrobeg.com/blog/" target="_blank" rel="noopener">Blog</a></li>
+        <li><a href="blog.html">Blog</a></li>
         <li><a href="iletisim.html" class="nav-cta">İletişim</a></li>
       </ul>
     </div>
@@ -479,71 +479,15 @@
         <h2>Blog</h2>
         <div class="divider"></div>
       </div>
-      <div class="blog-grid">
-
-        <!-- Post 1 -->
-        <article class="blog-card">
-          <a href="https://astrobeg.com/dogum-haritana-gore-kendi-mumunu-tasarla-aralik-atolyesi/" target="_blank" rel="noopener">
-            <div class="blog-card-img-placeholder">
-              <svg viewBox="5 8 275 148" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="10" y1="90" x2="135" y2="90" stroke-width="3"/>
-                <line x1="255" y1="90" x2="275" y2="90" stroke-width="3"/>
-                <circle cx="195" cy="90" r="60"/>
-                <circle cx="195" cy="90" r="47"/>
-                <circle cx="195" cy="90" r="35"/>
-                <circle cx="195" cy="90" r="23"/>
-                <circle cx="195" cy="90" r="12"/>
-              </svg>
-            </div>
-          </a>
-          <div class="blog-card-body">
-            <div class="blog-meta">Aralık 16, 2025</div>
-            <h3><a href="https://astrobeg.com/dogum-haritana-gore-kendi-mumunu-tasarla-aralik-atolyesi/" target="_blank" rel="noopener">Doğum Haritana Göre Kendi Mumunu Tasarla: Aralık Atölyesi</a></h3>
-            <p>Aralık ayında haritanıza göre kendi mumunuzu tasarlıyoruz! Eksik element → renk, dengelemek istediğiniz alan → koku, doğum haritası → tasarım.</p>
-            <a href="https://astrobeg.com/dogum-haritana-gore-kendi-mumunu-tasarla-aralik-atolyesi/" class="blog-read-more" target="_blank" rel="noopener">Devamını Oku</a>
-          </div>
-        </article>
-
-        <!-- Post 2 -->
-        <article class="blog-card">
-          <a href="https://astrobeg.com/hosgeldin-haziran-hosgeldin-yaz/" target="_blank" rel="noopener" style="overflow:hidden;display:block;">
-            <img
-              class="blog-card-img"
-              src="https://astrobeg.com/wp-content/uploads/2024/06/74e70f0f-2c14-49af-9843-ad45f4856d0f-300x300.jpeg"
-              alt="Hoşgeldin Haziran"
-              loading="lazy"
-            >
-          </a>
-          <div class="blog-card-body">
-            <div class="blog-meta">Haziran 3, 2024</div>
-            <h3><a href="https://astrobeg.com/hosgeldin-haziran-hosgeldin-yaz/" target="_blank" rel="noopener">Hoşgeldin Haziran, Hoşgeldin Yaz</a></h3>
-            <p>Hava enerjisinin çok yüksek olduğu bir güne başlıyoruz. Güneş'in İkizler burcundaki seyri, Venüs'ün ve Jüpiter'in de İkizler burcunda olması…</p>
-            <a href="https://astrobeg.com/hosgeldin-haziran-hosgeldin-yaz/" class="blog-read-more" target="_blank" rel="noopener">Devamını Oku</a>
-          </div>
-        </article>
-
-        <!-- Post 3 -->
-        <article class="blog-card">
-          <a href="https://astrobeg.com/27-31-mayis-haftasi-yeni-fikirler-uretme-zamani/" target="_blank" rel="noopener" style="overflow:hidden;display:block;">
-            <img
-              class="blog-card-img"
-              src="https://astrobeg.com/wp-content/uploads/2024/05/446604111_355816530851402_3069163210624738620_n-300x300.jpg"
-              alt="27-31 Mayıs Haftası"
-              loading="lazy"
-            >
-          </a>
-          <div class="blog-card-body">
-            <div class="blog-meta">Mayıs 28, 2024</div>
-            <h3><a href="https://astrobeg.com/27-31-mayis-haftasi-yeni-fikirler-uretme-zamani/" target="_blank" rel="noopener">27-31 Mayıs Haftası – Yeni Fikirler Üretme Zamanı</a></h3>
-            <p>Bu haftanın enerjilerinde bir bakalım mı, neler olacak? Geçen haftanın sonuna doğru başlayan Güneş ile Venüs kavuşumu bu hafta ortasına kadar devam ediyor.</p>
-            <a href="https://astrobeg.com/27-31-mayis-haftasi-yeni-fikirler-uretme-zamani/" class="blog-read-more" target="_blank" rel="noopener">Devamını Oku</a>
-          </div>
-        </article>
-
+      <div class="blog-grid" id="home-blog-grid">
+        <!-- Filled dynamically from posts.json -->
+        <div style="grid-column:1/-1;text-align:center;padding:40px 0;">
+          <div style="width:32px;height:32px;border:2px solid var(--navy-border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem;"></div>
+          <p>Yükleniyor…</p>
+        </div>
       </div>
-
       <div style="text-align:center; margin-top:3rem;">
-        <a href="http://astrobeg.com/blog/" class="btn btn-outline" target="_blank" rel="noopener">Tüm Yazılar</a>
+        <a href="blog.html" class="btn btn-outline">Tüm Yazılar</a>
       </div>
     </div>
   </section>
@@ -600,6 +544,49 @@
     const toggle = document.getElementById('nav-toggle');
     const links  = document.getElementById('nav-links');
     toggle.addEventListener('click', () => links.classList.toggle('open'));
+
+    // ── Dynamic blog from posts.json ────────────────────────
+    (async function loadHomeBlog() {
+      const grid = document.getElementById('home-blog-grid');
+      try {
+        const res  = await fetch('posts.json');
+        if (!res.ok) throw new Error('posts.json not found');
+        const data = await res.json();
+        const top3 = (data.posts || []).slice(0, 3);
+
+        if (!top3.length) { grid.innerHTML = ''; return; }
+
+        function esc(s) {
+          return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        const isIG = p => p.source === 'instagram';
+        const extra = p => isIG(p) ? ' target="_blank" rel="noopener"' : '';
+
+        grid.innerHTML = top3.map(p => `
+          <article class="blog-card">
+            <a href="${esc(p.permalink)}"${extra(p)} style="overflow:hidden;display:block;">
+              ${p.image
+                ? `<img class="blog-card-img" src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">`
+                : `<div class="blog-card-img-placeholder">
+                     <svg viewBox="5 8 275 148" fill="none" stroke="currentColor" stroke-width="2.5" style="width:56px;opacity:.2;color:var(--gold)">
+                       <circle cx="195" cy="90" r="60"/><circle cx="195" cy="90" r="47"/>
+                       <circle cx="195" cy="90" r="35"/><circle cx="195" cy="90" r="23"/>
+                     </svg>
+                   </div>`
+              }
+            </a>
+            <div class="blog-card-body">
+              <div class="blog-meta">${esc(p.dateFormatted || p.date.slice(0,10))}${isIG(p) ? ' · Instagram' : ''}</div>
+              <h3><a href="${esc(p.permalink)}"${extra(p)}>${esc(p.title)}</a></h3>
+              <p>${esc(p.excerpt)}</p>
+              <a href="${esc(p.permalink)}" class="blog-read-more"${extra(p)}>${isIG(p) ? "Instagram'da Gör" : 'Devamını Oku'}</a>
+            </div>
+          </article>`).join('');
+      } catch (_) {
+        grid.innerHTML = ''; // fail silently on homepage
+      }
+    })();
   </script>
 </body>
 </html>

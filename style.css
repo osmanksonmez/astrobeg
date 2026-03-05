@@ -160,7 +160,7 @@ p { font-size: 1rem; color: var(--cream-muted); }
 .nav-logo-mark {
   width: 44px;
   height: auto;
-  color: var(--white);
+  filter: brightness(0) invert(1);
   flex-shrink: 0;
 }
 
@@ -344,7 +344,7 @@ p { font-size: 1rem; color: var(--cream-muted); }
 
 .footer-logo-mark {
   width: 32px;
-  color: var(--white);
+  filter: brightness(0) invert(1);
 }
 
 .footer-logo-name {

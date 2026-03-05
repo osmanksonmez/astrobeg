@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İletişim – Astrobeg</title>
+  <meta name="description" content="Astroloji danışmanlığı için iletişime geçin. Doğum tarihi, saati ve yerinizle formu doldurun.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Contact layout ── */
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 8vw, 100px);
+      align-items: start;
+    }
+
+    /* ── Left: image + info ── */
+    .contact-info-col {}
+
+    .contact-photo-wrap {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-photo-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(5,9,33,0.85) 100%);
+      pointer-events: none;
+    }
+
+    .contact-photo-wrap img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      filter: brightness(0.85) saturate(0.85);
+      display: block;
+    }
+
+    .contact-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .contact-info-icon {
+      width: 42px; height: 42px;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--gold);
+    }
+
+    .contact-info-icon svg { width: 18px; }
+
+    .contact-info-text {}
+    .contact-info-text strong {
+      display: block;
+      font-weight: 500;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 2px;
+    }
+    .contact-info-text span {
+      font-size: 0.88rem;
+      color: var(--cream-muted);
+    }
+
+    /* ── Right: form ── */
+    .contact-form-col {}
+
+    .form-intro {
+      margin-bottom: 2.5rem;
+    }
+
+    .form-intro h2 { color: var(--cream); margin-bottom: 0.75rem; }
+    .form-intro p  { font-size: 0.95rem; }
+
+    .form-card {
+      background: var(--navy-card);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius-lg);
+      padding: clamp(28px, 5vw, 48px);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cream-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-group label span.req {
+      color: var(--gold);
+      margin-left: 2px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: rgba(5,9,33,0.6);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .form-control::placeholder { color: var(--cream-muted); opacity: 0.5; }
+
+    .form-control:focus {
+      border-color: rgba(201,168,76,0.55);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+    }
+
+    /* Date/time native controls */
+    .form-control[type="date"],
+    .form-control[type="time"] {
+      color-scheme: dark;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-submit {
+      margin-top: 2rem;
+    }
+
+    .form-submit .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 16px;
+      font-size: 0.82rem;
+    }
+
+    .form-note {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--cream-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .form-note svg { width: 13px; color: var(--gold); flex-shrink: 0; }
+
+    /* ── Why section ── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .why-card {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      background: var(--navy-card);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius-lg);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .why-card:hover {
+      border-color: rgba(201,168,76,0.35);
+      transform: translateY(-4px);
+    }
+
+    .why-card-icon {
+      width: 40px; height: 40px;
+      margin: 0 auto 1.25rem;
+      color: var(--gold);
+    }
+
+    .why-card h4 {
+      font-size: 1.05rem;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+
+    .why-card p { font-size: 0.85rem; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .contact-wrap { grid-template-columns: 1fr; }
+      .why-grid     { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Navigation ══ -->
+  <nav class="site-nav scrolled" id="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.svg" alt="Astrobeg logo mark" class="nav-logo-mark">
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">ASTROBEG</span>
+          <span class="nav-logo-sub">Begüm Küçüksönmez</span>
+        </div>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menüyü aç">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Anasayfa</a></li>
+        <li><a href="hakkimda.html">Hakkımda</a></li>
+        <li><a href="danismanlik.html">Danışmanlık</a></li>
+        <li><a href="https://astrobegshop.com" target="_blank" rel="noopener">Mağaza</a></li>
+        <li><a href="http://astrobeg.com/blog/" target="_blank" rel="noopener">Blog</a></li>
+        <li><a href="iletisim.html" class="nav-cta active">İletişim</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ══ Page Hero ══ -->
+  <div class="page-hero" id="content_skip_link_anchor">
+    <div class="container">
+      <span class="eyebrow">Danışmanlık İçin</span>
+      <h1>İletişim</h1>
+    </div>
+  </div>
+
+  <!-- ══ Main Contact ══ -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-wrap">
+
+        <!-- Left: Image + Info -->
+        <div class="contact-info-col">
+          <div class="contact-photo-wrap">
+            <img
+              src="https://astrobeg.com/wp-content/uploads/elementor/thumbs/Adsiz-tasarim-28-qnyq8jva0smuxsgxqz19li4knpffj3ialtp7ism5lk.jpg"
+              alt="Astroloji haritası"
+              loading="lazy"
+            >
+          </div>
+
+          <span class="eyebrow" style="display:block; margin-bottom:1rem;">Bilmeniz Gerekenler</span>
+          <h2 style="font-size:clamp(1.6rem,3vw,2.2rem); margin-bottom:1.5rem;">Seans için<br>Ne Gerekiyor?</h2>
+          <div class="divider"></div>
+
+          <div class="contact-info-list">
+
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8"  y1="2" x2="8"  y2="6"/>
+                  <line x1="3"  y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div class="contact-info-text">
+                <strong>Doğum Tarihi</strong>
+                <span>Gün, ay ve yıl olarak kesin tarihiniz gereklidir.</span>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <div class="contact-info-text">
+                <strong>Doğum Saati</strong>
+                <span>Mümkün olduğunca kesin saat önemlidir. Bilmiyorsanız belirtin.</span>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <div class="contact-info-text">
+                <strong>Doğum Yeri</strong>
+                <span>Şehir ve ülke bilgisi (mümkünse ilçe/semt) yeterlidir.</span>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                </svg>
+              </div>
+              <div class="contact-info-text">
+                <strong>Instagram</strong>
+                <span>
+                  <a href="https://www.instagram.com/astrobeg/" target="_blank" rel="noopener" style="color:var(--gold);">@astrobeg</a>
+                  üzerinden de ulaşabilirsiniz.
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div class="contact-form-col">
+          <div class="form-intro">
+            <span class="eyebrow">Randevu</span>
+            <h2>Formu Doldurun</h2>
+            <div class="divider"></div>
+            <p>Doğum bilgilerinizi paylaşın, en kısa sürede size dönüş yapayım.</p>
+          </div>
+
+          <div class="form-card">
+            <form action="#" method="post" novalidate>
+
+              <div class="form-group">
+                <label for="ad_soyad">Ad Soyad <span class="req">*</span></label>
+                <input
+                  id="ad_soyad"
+                  name="ad_soyad"
+                  type="text"
+                  class="form-control"
+                  placeholder="Adınız ve soyadınız"
+                  required
+                  autocomplete="name"
+                >
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="dogum_tarihi">Doğum Tarihi <span class="req">*</span></label>
+                  <input
+                    id="dogum_tarihi"
+                    name="dogum_tarihi"
+                    type="date"
+                    class="form-control"
+                    required
+                  >
+                </div>
+                <div class="form-group">
+                  <label for="dogum_saati">Doğum Saati</label>
+                  <input
+                    id="dogum_saati"
+                    name="dogum_saati"
+                    type="time"
+                    class="form-control"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="dogum_yeri">Doğum Yeri <span class="req">*</span></label>
+                <input
+                  id="dogum_yeri"
+                  name="dogum_yeri"
+                  type="text"
+                  class="form-control"
+                  placeholder="Şehir, Ülke"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="notlar">Notlarınız</label>
+                <textarea
+                  id="notlar"
+                  name="notlar"
+                  class="form-control"
+                  placeholder="Sormak istediğiniz konular, beklentileriniz veya ek notlar..."
+                  rows="5"
+                ></textarea>
+              </div>
+
+              <div class="form-submit">
+                <button type="submit" class="btn btn-primary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                  Gönder
+                </button>
+              </div>
+
+              <p class="form-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/>
+                  <path d="M7 11V7a5 5 0 0110 0v4"/>
+                </svg>
+                Bilgileriniz gizli tutulur, üçüncü şahıslarla paylaşılmaz.
+              </p>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Why Astrobeg ══ -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <span class="eyebrow">Neden Astrobeg?</span>
+        <h2>Fark Yaratan Detaylar</h2>
+        <div class="divider divider--center"></div>
+      </div>
+      <div class="why-grid">
+
+        <div class="why-card">
+          <svg class="why-card-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="24,4 28,18 43,18 31,27 36,41 24,32 12,41 17,27 5,18 20,18"/>
+          </svg>
+          <h4>15 Yıllık Deneyim</h4>
+          <p>Üniversite yıllarından bu yana süregelen derin ve tutarlı bir astroloji birikimi.</p>
+        </div>
+
+        <div class="why-card">
+          <svg class="why-card-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="24" cy="18" r="10"/>
+            <path d="M8 42c0-8.837 7.163-16 16-16s16 7.163 16 16"/>
+          </svg>
+          <h4>600+ Danışan</h4>
+          <p>Her biri kendine özgü hikâyesiyle yüzlerce danışana rehberlik ettim.</p>
+        </div>
+
+        <div class="why-card">
+          <svg class="why-card-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20S35 4 24 4"/>
+            <path d="M24 4a14.14 14.14 0 010 40M24 4a14.14 14.14 0 000 40M4 24h40"/>
+          </svg>
+          <h4>Hakan Kırkoğlu Ekolü</h4>
+          <p>Türkiye'nin en köklü astroloji okullarından birinde aldığım kapsamlı eğitim.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Footer ══ -->
+  <footer class="site-footer" id="footer_skip_link_anchor">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <img src="logo.svg" alt="" class="footer-logo-mark">
+          <span class="footer-logo-name">ASTROBEG</span>
+        </div>
+        <p class="footer-copy">© 2026 Astrobeg. Tüm hakları saklıdır.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/astrobeg/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="4.5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('site-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+    const toggle = document.getElementById('nav-toggle');
+    const links  = document.getElementById('nav-links');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+  </script>
+</body>
+</html>

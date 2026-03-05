@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danışmanlık – Astrobeg</title>
+  <meta name="description" content="Astrobeg astroloji danışmanlık hizmetleri. Doğum haritası analizi, yıllık tahmin ve daha fazlası.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Intro split ── */
+    .intro-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 8vw, 100px);
+      align-items: center;
+    }
+
+    .intro-split-text .lead {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1.3rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--cream-soft);
+      line-height: 1.65;
+      margin-bottom: 1.75rem;
+    }
+
+    .intro-split-text p { margin-bottom: 1.25rem; }
+
+    .intro-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Rotating ring decoration */
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.18);
+      animation: orbit-spin linear infinite;
+    }
+
+    .orbit-ring:nth-child(1) { width: 280px; height: 280px; animation-duration: 40s; }
+    .orbit-ring:nth-child(2) { width: 200px; height: 200px; animation-duration: 28s; animation-direction: reverse; }
+    .orbit-ring:nth-child(3) { width: 120px; height: 120px; animation-duration: 18s; }
+
+    .orbit-ring::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: 50%;
+      transform: translateX(-50%);
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    @keyframes orbit-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .orbit-center-logo {
+      width: 90px;
+      color: var(--gold);
+      opacity: 0.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    .intro-visual-wrap {
+      width: 320px;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    /* ── Pillars ── */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .pillar-card {
+      background: var(--navy-card);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .pillar-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s var(--ease);
+    }
+
+    .pillar-card:hover {
+      border-color: rgba(201,168,76,0.45);
+      transform: translateY(-6px);
+    }
+
+    .pillar-card:hover::before { transform: scaleX(1); }
+
+    .pillar-number {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: rgba(201,168,76,0.12);
+      line-height: 1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .pillar-icon {
+      width: 44px; height: 44px;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+    }
+
+    .pillar-card h3 {
+      font-size: 1.3rem;
+      color: var(--cream);
+      margin-bottom: 0.75rem;
+    }
+
+    .pillar-card p { font-size: 0.92rem; line-height: 1.7; }
+
+    /* ── Services ── */
+    .services-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--navy-border);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .service-row {
+      background: var(--navy-card);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 2rem 2.5rem;
+      transition: background 0.25s;
+      cursor: default;
+    }
+
+    .service-row:hover { background: rgba(30,42,122,0.55); }
+
+    .service-icon {
+      width: 44px; height: 44px;
+      background: rgba(201,168,76,0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--gold);
+    }
+
+    .service-icon svg { width: 22px; }
+
+    .service-info h4 {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1.15rem;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+    }
+
+    .service-info p { font-size: 0.85rem; }
+
+    .service-badge {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.25);
+      padding: 5px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    /* ── Process ── */
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .process-grid::before {
+      content: '';
+      position: absolute;
+      top: 22px; left: calc(12.5% + 22px);
+      right: calc(12.5% + 22px);
+      height: 1px;
+      background: var(--navy-border);
+    }
+
+    .process-step {
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .process-step-num {
+      width: 44px; height: 44px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      background: var(--navy-deep);
+      position: relative;
+      z-index: 1;
+    }
+
+    .process-step h4 {
+      font-size: 1rem;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+
+    .process-step p { font-size: 0.82rem; }
+
+    /* ── CTA Band ── */
+    .cta-band {
+      background: linear-gradient(135deg, rgba(30,42,122,0.6) 0%, rgba(16,24,64,0.9) 100%);
+      border-top: 1px solid var(--navy-border);
+      border-bottom: 1px solid var(--navy-border);
+      padding: 80px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-band::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 100% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+    }
+
+    .cta-band h2 { color: var(--cream); margin-bottom: 1rem; }
+    .cta-band p  { max-width: 520px; margin: 0 auto 2.5rem; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .intro-split    { grid-template-columns: 1fr; }
+      .intro-visual   { order: -1; }
+      .pillars-grid   { grid-template-columns: 1fr; }
+      .process-grid   { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .process-grid::before { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .process-grid { grid-template-columns: 1fr; }
+      .service-row  { grid-template-columns: auto 1fr; }
+      .service-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Navigation ══ -->
+  <nav class="site-nav scrolled" id="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.svg" alt="Astrobeg logo mark" class="nav-logo-mark">
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">ASTROBEG</span>
+          <span class="nav-logo-sub">Begüm Küçüksönmez</span>
+        </div>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menüyü aç">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Anasayfa</a></li>
+        <li><a href="hakkimda.html">Hakkımda</a></li>
+        <li><a href="danismanlik.html" class="active">Danışmanlık</a></li>
+        <li><a href="https://astrobegshop.com" target="_blank" rel="noopener">Mağaza</a></li>
+        <li><a href="http://astrobeg.com/blog/" target="_blank" rel="noopener">Blog</a></li>
+        <li><a href="iletisim.html" class="nav-cta">İletişim</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ══ Page Hero ══ -->
+  <div class="page-hero" id="content_skip_link_anchor">
+    <div class="container">
+      <span class="eyebrow">Profesyonel Astroloji</span>
+      <h1>Danışmanlık</h1>
+    </div>
+  </div>
+
+  <!-- ══ Intro ══ -->
+  <section class="section">
+    <div class="container">
+      <div class="intro-split">
+        <div class="intro-split-text">
+          <span class="eyebrow">Neden Astroloji?</span>
+          <h2>Kaderinizin Yolculuğunu<br>Birlikte Keşfedelim</h2>
+          <div class="divider"></div>
+          <p class="lead">Kaderinizin yolculuğunu gökyüzündeki yıldızların ışığında keşfedin.</p>
+          <p>Doğum haritanız, gökyüzünün doğduğunuz an çekilen fotoğrafıdır. Her gezegenin konumu, her açı ve her ev, kim olduğunuzu ve hayatınızda neyin mümkün olduğunu anlatır.</p>
+          <p>Astroloji sadece "ne olacak?" sorusuna cevap değil; "ben kimim ve nasıl büyüyebilirim?" sorusuna derinlikli bir ayna tutar. Psikolojik bir çerçevede, tam gizlilik ve sezgisel bir bakışla danışmanlık veriyorum.</p>
+        </div>
+
+        <div class="intro-visual">
+          <div class="intro-visual-wrap">
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring"></div>
+            <img src="logo.svg" alt="" class="orbit-center-logo">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Pillars ══ -->
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <span class="eyebrow">Yaklaşımım</span>
+        <h2>Üç Temel İlke</h2>
+        <div class="divider divider--center"></div>
+      </div>
+      <div class="pillars-grid">
+
+        <div class="pillar-card">
+          <div class="pillar-number">01</div>
+          <svg class="pillar-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="24" cy="18" r="10"/>
+            <path d="M8 42c0-8.837 7.163-16 16-16s16 7.163 16 16"/>
+            <path d="M24 8V4M36 12l2-2M40 18h4M36 24l2 2M12 12l-2-2M8 18H4M12 24l-2 2"/>
+          </svg>
+          <h3>Psikolojik Yaklaşım</h3>
+          <div class="divider"></div>
+          <p>Astroloji ve modern psikoloji bir arada. Doğum haritanız sadece bir tahmin aracı değil; kendinizi daha derinden anlamanın, güçlü ve zayıf yönlerinizi keşfetmenin bir haritasıdır.</p>
+        </div>
+
+        <div class="pillar-card">
+          <svg class="pillar-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="8" y="14" width="32" height="26" rx="3"/>
+            <path d="M16 14V10a8 8 0 0116 0v4"/>
+            <circle cx="24" cy="27" r="3"/>
+            <path d="M24 30v4"/>
+          </svg>
+          <div class="pillar-number">02</div>
+          <h3>Tam Gizlilik</h3>
+          <div class="divider"></div>
+          <p>Danışmanlık seanslarında paylaşılan her bilgi kesinlikle gizli tutulur. Güvenli ve samimi bir ortam oluşturmak, başarılı bir danışmanlığın temelidir.</p>
+        </div>
+
+        <div class="pillar-card">
+          <svg class="pillar-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="24,4 28,18 43,18 31,27 36,41 24,32 12,41 17,27 5,18 20,18"/>
+          </svg>
+          <div class="pillar-number">03</div>
+          <h3>Sezgisel Yetenekler</h3>
+          <div class="divider"></div>
+          <p>15 yılı aşkın deneyim ve Hakan Kırkoğlu ekolünden edinilen derin bilgi. Haritanızdaki ince nüansları teknik bilgi ile sezgisel bir gözü birleştirerek yorumluyorum.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Services ══ -->
+  <section class="section" style="background: var(--navy-mid);">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Ne Sunuyorum?</span>
+        <h2>Hizmetler</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="services-list">
+
+        <div class="service-row">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="4"/>
+              <line x1="12" y1="2" x2="12" y2="8"/>
+              <line x1="12" y1="16" x2="12" y2="22"/>
+              <line x1="2" y1="12" x2="8" y2="12"/>
+              <line x1="16" y1="12" x2="22" y2="12"/>
+            </svg>
+          </div>
+          <div class="service-info">
+            <h4>Doğum Haritası Analizi</h4>
+            <p>Doğduğunuz an ve yerdeki gökyüzü konumunun detaylı analizi. Kişilik, güçlü yönler, zorluklar ve yaşam temaları.</p>
+          </div>
+          <span class="service-badge">Temel</span>
+        </div>
+
+        <div class="service-row">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+              <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>
+            </svg>
+          </div>
+          <div class="service-info">
+            <h4>Yıllık Tahmin</h4>
+            <p>Gelecek 12 ayın astrolojik haritası. Önünüzdeki dönemin fırsatları, zorluğu ve önemli geçiş noktaları.</p>
+          </div>
+          <span class="service-badge">Popüler</span>
+        </div>
+
+        <div class="service-row">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+          </div>
+          <div class="service-info">
+            <h4>İlişki Uyum Analizi (Sinastri)</h4>
+            <p>İki kişinin doğum haritalarının karşılaştırmalı analizi. Çift dinamikleri, güçlü bağlar ve gelişim alanları.</p>
+          </div>
+          <span class="service-badge">İleri</span>
+        </div>
+
+        <div class="service-row">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="service-info">
+            <h4>Transit Analizi</h4>
+            <p>Güncel gezegensel hareketlerin doğum haritanız ile etkileşimi. Hangi enerji nerede aktif?</p>
+          </div>
+          <span class="service-badge">Detaylı</span>
+        </div>
+
+        <div class="service-row">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <div class="service-info">
+            <h4>Soru Astrolojisi (Horary)</h4>
+            <p>Aklınızdaki belirli bir soru için anlık gökyüzü haritası oluşturularak cevap aranır.</p>
+          </div>
+          <span class="service-badge">Özel</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Process ══ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <span class="eyebrow">Nasıl Çalışır?</span>
+        <h2>Süreç</h2>
+        <div class="divider divider--center"></div>
+      </div>
+      <div class="process-grid">
+        <div class="process-step">
+          <div class="process-step-num">1</div>
+          <h4>İletişime Geçin</h4>
+          <p>İletişim formunu doldurun. Doğum tarihi, saati ve yeri bilgilerinizi paylaşın.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">2</div>
+          <h4>Harita Hazırlanır</h4>
+          <p>Bilgilerinizle doğum haritanız oluşturulur ve analiz için hazırlanır.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">3</div>
+          <h4>Seans</h4>
+          <p>Video veya yüz yüze seans ile haritanız detaylı şekilde yorumlanır.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">4</div>
+          <h4>Yol Haritanız</h4>
+          <p>Seans notu ve önerilerle birlikte kendi yol haritanıza sahip olursunuz.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CTA Band ══ -->
+  <div class="cta-band">
+    <div class="container">
+      <span class="eyebrow">Başlayalım</span>
+      <h2>İlk Adımı Atın</h2>
+      <p>Doğum haritanızın size ne anlatacağını merak ediyorsanız, bir seans ayarlayalım.</p>
+      <a href="iletisim.html" class="btn btn-primary">Randevu Alın</a>
+    </div>
+  </div>
+
+  <!-- ══ Footer ══ -->
+  <footer class="site-footer" id="footer_skip_link_anchor">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <img src="logo.svg" alt="" class="footer-logo-mark">
+          <span class="footer-logo-name">ASTROBEG</span>
+        </div>
+        <p class="footer-copy">© 2026 Astrobeg. Tüm hakları saklıdır.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/astrobeg/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="4.5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('site-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+    const toggle = document.getElementById('nav-toggle');
+    const links  = document.getElementById('nav-links');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+  </script>
+</body>
+</html>

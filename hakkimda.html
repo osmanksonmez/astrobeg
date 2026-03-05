@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hakkımda – Astrobeg</title>
+  <meta name="description" content="Begüm Küçüksönmez hakkında. 15 yıllık astroloji deneyimi, eğitim ve profesyonel danışmanlık.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── About specific ── */
+    .about-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 8vw, 100px);
+      align-items: start;
+    }
+
+    /* Photo column */
+    .about-photo-col {
+      position: sticky;
+      top: calc(var(--nav-height) + 40px);
+    }
+
+    .about-photo-frame {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .about-photo-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(5,9,33,0.8) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Gold border accent */
+    .about-photo-frame::after {
+      content: '';
+      position: absolute;
+      top: 16px; left: 16px;
+      right: -16px; bottom: -16px;
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: var(--radius-lg);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .about-photo-frame img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: center top;
+      position: relative;
+      z-index: 0;
+      filter: brightness(0.9) saturate(0.85);
+      border-radius: var(--radius-lg);
+    }
+
+    /* Name badge on photo */
+    .about-photo-badge {
+      position: absolute;
+      bottom: 28px; left: 28px;
+      z-index: 2;
+      background: rgba(5,9,33,0.88);
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    .about-photo-badge-name {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--cream);
+      display: block;
+    }
+
+    .about-photo-badge-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Content column */
+    .about-content-col h1 {
+      margin-bottom: 1.5rem;
+    }
+
+    .about-content-col .lead {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1.35rem;
+      font-weight: 300;
+      color: var(--cream-soft);
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Timeline */
+    .timeline {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 20px;
+      padding-bottom: 2rem;
+      position: relative;
+    }
+
+    /* Vertical line */
+    .timeline-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 13px; top: 28px;
+      width: 1px;
+      bottom: 0;
+      background: var(--navy-border);
+    }
+
+    .timeline-dot {
+      width: 28px; height: 28px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      background: var(--navy-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-dot-inner {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .timeline-body {}
+
+    .timeline-body h4 {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-body p { font-size: 0.9rem; }
+
+    /* Skills */
+    .skills-section {
+      margin-top: 3rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--navy-border);
+    }
+
+    .skills-section h3 {
+      font-size: 1.1rem;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+    }
+
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-tag {
+      padding: 7px 18px;
+      border: 1px solid var(--navy-border);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      color: var(--cream-muted);
+      letter-spacing: 0.06em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .skill-tag:hover {
+      border-color: rgba(201,168,76,0.5);
+      color: var(--gold);
+    }
+
+    /* CTA */
+    .about-cta {
+      margin-top: 3rem;
+      padding: 2.5rem;
+      background: var(--navy-card);
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .about-cta-text h3 { font-size: 1.3rem; color: var(--cream); margin-bottom: 0.4rem; }
+    .about-cta-text p  { font-size: 0.88rem; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .about-wrap { grid-template-columns: 1fr; }
+      .about-photo-col { position: static; }
+      .about-photo-frame::after { display: none; }
+      .about-photo-frame img { aspect-ratio: 4/3; object-position: center 20%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Navigation ══ -->
+  <nav class="site-nav scrolled" id="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.svg" alt="Astrobeg logo mark" class="nav-logo-mark">
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">ASTROBEG</span>
+          <span class="nav-logo-sub">Begüm Küçüksönmez</span>
+        </div>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menüyü aç">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Anasayfa</a></li>
+        <li><a href="hakkimda.html" class="active">Hakkımda</a></li>
+        <li><a href="danismanlik.html">Danışmanlık</a></li>
+        <li><a href="https://astrobegshop.com" target="_blank" rel="noopener">Mağaza</a></li>
+        <li><a href="http://astrobeg.com/blog/" target="_blank" rel="noopener">Blog</a></li>
+        <li><a href="iletisim.html" class="nav-cta">İletişim</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ══ Page Hero ══ -->
+  <div class="page-hero" id="content_skip_link_anchor">
+    <div class="container">
+      <span class="eyebrow">Kim Bu Kişi?</span>
+      <h1>Hakkımda</h1>
+    </div>
+  </div>
+
+  <!-- ══ About Content ══ -->
+  <section class="section">
+    <div class="container">
+      <div class="about-wrap">
+
+        <!-- Photo -->
+        <div class="about-photo-col">
+          <div class="about-photo-frame">
+            <img
+              src="https://astrobeg.com/wp-content/uploads/2020/05/Adsiz-tasarim-2024-05-11T141919.375-960x1024.webp"
+              alt="Begüm Küçüksönmez"
+              loading="lazy"
+            >
+            <div class="about-photo-badge">
+              <span class="about-photo-badge-name">Begüm Küçüksönmez</span>
+              <span class="about-photo-badge-title">Profesyonel Astrolog</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="about-content-col">
+          <span class="eyebrow">Begüm Küçüksönmez</span>
+          <h1>Yıldızları Okuyan<br>Bir Rehber</h1>
+          <div class="divider"></div>
+
+          <p class="lead">
+            Üniversite yıllarından bu yana yaklaşık 15 yıldır astroloji ile ilgilenmekteyim.
+            Her doğum haritasının eşsiz bir hikâye anlattığına inanıyorum.
+          </p>
+
+          <!-- Timeline -->
+          <div class="timeline">
+
+            <div class="timeline-item">
+              <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+              <div class="timeline-body">
+                <h4>Doğum — 1984, İstanbul</h4>
+                <p>İstanbul'da doğdum. Hayatım boyunca gökyüzü ile olan bağım beni bu yola taşıdı.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+              <div class="timeline-body">
+                <h4>Özel Büyük Kolej</h4>
+                <p>İlk ve ortaöğrenimimi Özel Büyük Kolej Lisesinde tamamladım.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+              <div class="timeline-body">
+                <h4>Hindoloji — DTCF, Ankara Üniversitesi</h4>
+                <p>Lisans eğitimimi Ankara Üniversitesi Dil ve Tarih Coğrafya Fakültesi – Hindoloji Bölümünde tamamladım. Doğu felsefesi ve mitolojisine olan ilgim burada derinleşti.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+              <div class="timeline-body">
+                <h4>Göklerin Bilgileri Okulu</h4>
+                <p>Türkiye'nin en eski astrologlarından biri olan Hakan Kırkoğlu'nun Göklerin Bilgileri Okulunda eğitim programını tamamladım.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+              <div class="timeline-body">
+                <h4>600+ Danışan ile Profesyonel Danışmanlık</h4>
+                <p>Bugüne kadar 600'ün üzerinde danışan ile profesyonel olarak danışmanlık verdim. Her harita farklı, her insan eşsizdir.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Skills -->
+          <div class="skills-section">
+            <h3>Uzmanlık Alanları</h3>
+            <div class="skills-grid">
+              <span class="skill-tag">Doğum Haritası</span>
+              <span class="skill-tag">Yıllık Tahmin</span>
+              <span class="skill-tag">Psikolojik Astroloji</span>
+              <span class="skill-tag">İlişki Uyumu</span>
+              <span class="skill-tag">Kariyer Danışmanlığı</span>
+              <span class="skill-tag">Vedik Astroloji</span>
+              <span class="skill-tag">Transit Analizi</span>
+              <span class="skill-tag">Soru Astrolojisi</span>
+            </div>
+          </div>
+
+          <!-- CTA block -->
+          <div class="about-cta">
+            <div class="about-cta-text">
+              <h3>Sizinle Tanışmak İsterim</h3>
+              <p>Doğum haritanızı birlikte keşfetmek için bir adım atın.</p>
+            </div>
+            <a href="iletisim.html" class="btn btn-primary">Danışmanlık Alın</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Footer ══ -->
+  <footer class="site-footer" id="footer_skip_link_anchor">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <img src="logo.svg" alt="" class="footer-logo-mark">
+          <span class="footer-logo-name">ASTROBEG</span>
+        </div>
+        <p class="footer-copy">© 2026 Astrobeg. Tüm hakları saklıdır.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/astrobeg/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="4.5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('site-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+    const toggle = document.getElementById('nav-toggle');
+    const links  = document.getElementById('nav-links');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+  </script>
+</body>
+</html>

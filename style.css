@@ -1,0 +1,419 @@
+/* ============================================================
+   ASTROBEG — Shared Stylesheet
+   Design: Deep space navy + antique gold + warm cream
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── CSS Variables ─────────────────────────────────────────── */
+:root {
+  --navy-deep:    #050921;
+  --navy-mid:     #0A1230;
+  --navy-card:    #101840;
+  --navy-border:  #1C2660;
+  --gold:         #C9A84C;
+  --gold-light:   #E2C872;
+  --gold-dim:     #7A6430;
+  --cream:        #F2EDE4;
+  --cream-muted:  #8B97B8;
+  --cream-soft:   #C8D0E0;
+  --white:        #FFFFFF;
+  --logo-navy:    #1E2A7A;
+
+  --nav-height: 80px;
+  --section-pad: clamp(64px, 8vw, 120px);
+  --max-width: 1200px;
+  --radius: 4px;
+  --radius-lg: 12px;
+
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ── Reset & Base ──────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background-color: var(--navy-deep);
+  color: var(--cream);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 300;
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Star-field background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.75) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.45) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.60) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.40) 1px, transparent 1px);
+  background-size:
+    317px 317px, 211px 211px, 383px 383px,
+    257px 257px, 173px 173px, 443px 443px;
+  background-position:
+    40px 20px, 130px 90px, 70px 180px,
+    200px 40px, 310px 130px, 20px 290px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* Subtle radial glow at top */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(30,42,122,0.45) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+ul { list-style: none; }
+
+/* ── Typography ────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: 'Cormorant Garant', Georgia, serif;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+
+h1 { font-size: clamp(2.6rem, 6vw, 4.5rem); }
+h2 { font-size: clamp(2rem, 4vw, 3.2rem); }
+h3 { font-size: clamp(1.4rem, 2.5vw, 1.9rem); }
+h4 { font-size: 1.2rem; }
+
+p { font-size: 1rem; color: var(--cream-muted); }
+
+.eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ── Layout ────────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 60px);
+  position: relative;
+  z-index: 1;
+}
+
+.section { padding: var(--section-pad) 0; position: relative; }
+
+/* Gold divider line */
+.divider {
+  width: 60px; height: 1px;
+  background: var(--gold);
+  margin: 1.5rem 0 2rem;
+}
+.divider--center { margin-left: auto; margin-right: auto; }
+
+/* ── Navigation ────────────────────────────────────────────── */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--nav-height);
+  z-index: 1000;
+  transition: background 0.4s var(--ease), border-bottom 0.4s;
+}
+
+.site-nav.scrolled {
+  background: rgba(5, 9, 33, 0.96);
+  border-bottom: 1px solid var(--navy-border);
+  backdrop-filter: blur(12px);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 60px);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-logo-mark {
+  width: 44px;
+  height: auto;
+  color: var(--cream);
+  flex-shrink: 0;
+}
+
+.nav-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.nav-logo-name {
+  font-family: 'Cormorant Garant', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--cream);
+}
+
+.nav-logo-sub {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+}
+
+.nav-links a {
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cream-muted);
+  transition: color 0.25s;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--cream);
+  border-bottom-color: var(--gold);
+}
+
+.nav-links .nav-cta {
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 8px 20px;
+  color: var(--gold);
+  font-size: 0.78rem;
+  transition: background 0.25s, color 0.25s;
+}
+
+.nav-links .nav-cta:hover {
+  background: var(--gold);
+  color: var(--navy-deep);
+  border-color: var(--gold);
+}
+
+/* Mobile nav toggle */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--navy-border);
+  color: var(--cream);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  transition: border-color 0.2s;
+}
+
+.nav-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: all 0.3s var(--ease);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--navy-deep);
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(201, 168, 76, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid rgba(242, 237, 228, 0.35);
+}
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+/* ── Cards ─────────────────────────────────────────────────── */
+.card {
+  background: var(--navy-card);
+  border: 1px solid var(--navy-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.card:hover {
+  border-color: rgba(201, 168, 76, 0.4);
+  transform: translateY(-4px);
+}
+
+/* ── Page Hero (inner pages) ───────────────────────────────── */
+.page-hero {
+  padding: calc(var(--nav-height) + 60px) 0 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--navy-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(30,42,122,0.4) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page-hero .eyebrow { margin-bottom: 1rem; }
+.page-hero h1 { color: var(--cream); }
+
+/* ── Section Headers ───────────────────────────────────────── */
+.section-header {
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+
+.section-header--center { text-align: center; }
+
+.section-header .eyebrow { display: block; margin-bottom: 0.75rem; }
+
+/* ── Footer ────────────────────────────────────────────────── */
+.site-footer {
+  border-top: 1px solid var(--navy-border);
+  padding: 40px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-logo-mark {
+  width: 32px;
+  color: var(--gold);
+}
+
+.footer-logo-name {
+  font-family: 'Cormorant Garant', serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
+  color: var(--cream);
+}
+
+.footer-copy {
+  font-size: 0.78rem;
+  color: var(--cream-muted);
+  letter-spacing: 0.04em;
+}
+
+.footer-social {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-social a {
+  width: 36px; height: 36px;
+  border: 1px solid var(--navy-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cream-muted);
+  font-size: 0.9rem;
+  transition: border-color 0.25s, color 0.25s;
+}
+
+.footer-social a:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ── Gold ornament / celestial accent ─────────────────────── */
+.celestial-accent {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.06;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-toggle { display: flex; }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: var(--nav-height); left: 0; right: 0;
+    background: rgba(5, 9, 33, 0.98);
+    border-bottom: 1px solid var(--navy-border);
+    padding: 24px clamp(20px, 5vw, 60px);
+    gap: 20px;
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-links.open { display: flex; }
+
+  .nav-links a {
+    font-size: 0.9rem;
+  }
+
+  .nav-links .nav-cta {
+    width: fit-content;
+  }
+
+  .footer-inner { flex-direction: column; text-align: center; }
+}

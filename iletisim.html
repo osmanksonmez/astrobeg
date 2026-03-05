@@ -541,7 +541,12 @@
       msg.style.display = 'none';
 
       try {
-        const res  = await fetch('send-mail.php', { method: 'POST', body: new FormData(this) });
+        const fields = Object.fromEntries(new FormData(this));
+        const res  = await fetch('/api/send-mail', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(fields),
+        });
         const data = await res.json();
         showMessage(data.message, data.ok);
         if (data.ok) this.reset();
